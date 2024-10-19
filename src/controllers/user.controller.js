@@ -7,9 +7,12 @@ import {ApiResponse} from '../utils/ApiResponse.js';
 const generateAccessandRefreshToken=async(userId)=>{
     try {
         const user= await User.findById(userId);
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
         const accessToken=user.generateAccessToken();
         const refreshToken=user.generateRefreshToken();
-        user.refreshToken=refreshToken;
+        user.refreshToken = refreshToken;
         await user.save({validateBeforeSave:false})
         return {accessToken,refreshToken}
     } catch (error) {
@@ -91,8 +94,8 @@ const loginUser=asyncHandler(async(req,res)=>{
     //send cookie
 
     const {email,username,password}=req.body;
-    if(!username && !email){
-        throw new ApiError(400,"username or password is required");
+    if(!(username || email)){
+        throw new ApiError(400,"username or email is required");
     }
     const user=await User.findOne({
         $or:[{email},{username}]
@@ -111,7 +114,7 @@ const loginUser=asyncHandler(async(req,res)=>{
         secure:true,
     }
     return res.status(200).cookie("accessToken",accessToken,options)
-    .cookie("refrehToken",refreshToken,options).json(
+    .cookie("refreshToken",refreshToken,options).json(
         new ApiResponse(
             200,
             {
@@ -129,7 +132,7 @@ const logoutUser=asyncHandler(async(req,res)=>{
         req.user._id,
         {
             $set:{
-                refreshToken:undefined
+                refreshToken:null
             }
         },
         {

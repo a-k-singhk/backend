@@ -9,7 +9,7 @@ const storage=multer.diskStorage({
     }
 })
 
-export const uplaod=multer({
+export const upload=multer({
     //storage:storage    we can use below one beacuase we r using es6
     storage,
 })

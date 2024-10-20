@@ -388,7 +388,7 @@ const getWatchedHistory=asyncHandler(async(req,res)=>{
         },
         {
             $lookup:{
-                from:"videos",
+                from:"video", //check it if it is wrong
                 localField:"watchHistory",
                 foreignField:"_id",
                 as:"watchHistory",
@@ -410,7 +410,7 @@ const getWatchedHistory=asyncHandler(async(req,res)=>{
                                 {
                                     $addFields:{
                                         owner:{
-                                            first:"$ownerk"
+                                            first:"$owner"
                                         }
                                     }
                                 }

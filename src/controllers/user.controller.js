@@ -133,8 +133,8 @@ const logoutUser=asyncHandler(async(req,res)=>{
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $set:{
-                refreshToken:null
+            $unset:{
+                refreshToken:1
             }
         },
         {
@@ -324,15 +324,15 @@ const getUserChannelProfile=asyncHandler(async(req,res)=>{
         },
         {
             $lookup:{
-                from:"subscription",
+                from:"subscriptions",
                 localField:"_id",
                 foreignField:"channel",
-                as:"subscriber"
+                as:"subscribers"
             }
         },
         {
             $lookup:{
-                from:"subscription",
+                from:"subscriptions",
                 localField:"_id",
                 foreignField:"subscriber",
                 as:"subscribedTo"
@@ -388,7 +388,7 @@ const getWatchedHistory=asyncHandler(async(req,res)=>{
         },
         {
             $lookup:{
-                from:"video", //check it if it is wrong
+                from:"videos",
                 localField:"watchHistory",
                 foreignField:"_id",
                 as:"watchHistory",
